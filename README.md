@@ -86,6 +86,8 @@ Note the Attributes are:
 - A4: Wind
 - Label: Play
 
+![tree_building](https://github.com/Dor-sketch/DecisionTreeAI/assets/138825033/116235a1-13cc-42da-bf03-8c9debde8301)
+
 The train and test files are identical, so the accuracy is 1.0 as expected.
 
 ```plaintext
@@ -159,6 +161,10 @@ dorpascal@Mac-mini HW3_Skeleton % python3.11 my_HW3.py 3 tennis.txt tennis.txt
 ---
 
 ### Loans Data Set
+
+![loan_tree](https://github.com/Dor-sketch/DecisionTreeAI/assets/138825033/50e3f7f0-d904-4ecb-83d1-d1bdbcbc0f66)
+
+*GIF based on 108 instances for readability*
 
 The following output are from the loan application data set (`prune_train.txt` and `prune_test.txt`). Note that the name of the files probably should be `loan_train.txt` and `loan_test.txt` as the data set is about loans, but I kept the original names.
 
