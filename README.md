@@ -2,10 +2,6 @@
 
 This project showcases a Python solution for Assignment 3 of the CS 540 Introduction to Artificial Intelligence course at the *University of Wisconsin-Madison*, adapted from a **CS 20551 Introduction to AI** course at the *Open University of Israel*  (2024a) as mmn (`Matalat Manche`) 18. Originally based on Java code from the assignment, this reimplementation in Python achieved a perfect score! 🎯
 
-<p align = "center">
-    <img src="cover.png" width="600"/>
-</p>
-
 ---
 
 - [📖 Overview](#-overview)
