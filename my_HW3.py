@@ -6,15 +6,23 @@ class HW3:
     @staticmethod
     def parseArgs(args):
         if len(args) < 3:
-            print("usage: python3 HW3.py <modeFlag: 0, 1, 2, 3> <trainFilename> "
+            print("usage: python3 my_HW3.py <modeFlag: 0, 1, 2, 3, 4> <trainFilename> "
                   + "<testFilename>")
+            print("mode 0: output the mutual information of each attribute at the root node")
+            print("mode 1: create a decision tree from a training set, output the tree")
+            print("mode 2: create a decision tree from a training set, output the classifications of a test set")
+            print("mode 3: create a decision tree from a training set, output the accuracy of the tree on a test set")
+            print("mode 4: generate a GIF of the decision tree being built")
+            print()
+            print("Try running the following command:")
+            print("python3 my_HW3.py 4 ./data/tennis.txt ./data/tennis.txt")
             # I removed the optional tuneFilename argument since it was not
             # part of the original assignment
             sys.exit(-1)
 
         mode = int(args[0])
-        if 0 > mode or mode > 3:
-            print("mode must be between 0 and 3")
+        if 0 > mode or mode > 4:
+            print("mode must be between 0 and 4")
             sys.exit(-1)
 
         return mode, args[1], args[2]
@@ -50,6 +58,10 @@ class HW3:
         elif mode == 3:
             # mode 3 : create a decision tree from a training set, output the accuracy of the tree on a test set
             tree.printAccuracy(testSet)
+
+        if mode == 4:
+            # mode 4 : generate a GIF of the decision tree being built
+            tree.animate_building_tree()
 
     @staticmethod
     def createDataSet(file):

@@ -1,104 +1,41 @@
 from my_DecisionTree import DecisionTree
-from math import log2
 # if you want to print the p in a a/b format, use the following import
 # - helped me to understand the fractions and debug the code
 from fractions import Fraction
 # print(Fraction.from_float(p).limit_denominator())
 
+# if you want to print the tree building process, use the following imports
+import networkx as nx
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from Formulas import Formulas
 
-class Formulas:
-    def __init__(self, decision_tree, training_set):
-        if decision_tree is None:
-            decision_tree = DecisionTreeImpl(training_set)
-        self.attributes = decision_tree.attributes
-        self.training_set = training_set
-        self.attribute_values = decision_tree.attribute_values
-        self.labels = decision_tree.labels
 
-    def B(self, q):
-        """Return the entropy of a Boolean random variable
-        that is true with probability q and false
-        with probability 1-q."""
-        if q == 0 or q == 1:
-            return 0
-        return -q * log2(q) - (1 - q) * log2(1 - q)
+node_count = 0
 
-    def P(self, attribute, value):
-        """Return the probability of the attribute equaling a specific value."""
-        att_count = 0
-        # important: use the index of the value in the attribute_values list
-        value_index = self.attribute_values[attribute].index(value)
-        for instance in self.training_set:
-            if instance[attribute] == value_index:
-                att_count += 1
-        total_count = len(self.training_set)
-        return att_count / total_count if total_count > 0 else 0
-
-    def H(self, attribute):
-        """Return the entropy of the attribute."""
-        if attribute not in self.attributes:
-            return 0
-
-        entropy = 0
-        for value in self.attribute_values[attribute]:
-            # Probability of this attribute value in the dataset
-            p = self.P(attribute, value)
-            if p > 0:  # To avoid log2(0) which is undefined
-                entropy += -p * log2(p)  # Apply the entropy formula
-
-        return entropy
-
-    def Remainder(self, attribute):
-        """Return the remainder of the attribute."""
-        reminder = 0
-        subSets = {}
-        for instance in self.training_set:
-            key = instance[attribute]
-            if key not in subSets:
-                subSets[key] = []
-            subSets[key].append(instance)
-        total = len(self.training_set)
-        for subSet in subSets.values():
-            p = sum(1 for instance in subSet if instance.label ==
-                    self.labels[0])
-            n = len(subSet) - p
-            if (p + n) > 0:
-                reminder += (p + n) / total * self.B(p / (p + n))
-        return reminder
-
-    def classificationH(self):
-        """Return the entropy of the label"""
-        entropy = 0
-        for label in self.labels:
-            p = sum(1 for instance in self.training_set if instance.label == label)
-            p /= len(self.training_set)
-            print(f"{sum(1 for instance in self.training_set if instance.label == label)} / {len(self.training_set)}")
-            print(Fraction(1-p).limit_denominator())
-            if p > 0:
-                entropy += -p * log2(p) - (1 - p) * log2(1 - p)
-        return entropy
-
-    def Gain(self, attribute):
-        """Return the gain of the attribute."""
-        print(f"classificationH: {self.classificationH()}")
-        print(f"Remainder({attribute}): {self.Remainder(attribute)}")
-        print(f"Gain({attribute}): {self.classificationH() - self.Remainder(attribute)}")
-        return self.classificationH() - self.Remainder(attribute)
 
 
 class DecTreeNode:
     def __init__(self, label, attribute, parent_attribute_value, terminal):
+        global node_count # used to give each node a unique id, for animation purposes
         self.label = label
         self.attribute = attribute
         self.parent_attribute_value = parent_attribute_value
         self.terminal = terminal
         self.children = []
+        self.id = node_count
+        node_count += 1
 
     def add_child(self, node):
         self.children.append(node)
 
     def __str__(self):
-        return f"DecTreeNode: label={self.label}, attribute={self.attribute}, parent_attribute_value={self.parent_attribute_value}, terminal={self.terminal}"
+        ret = f"{self.id} "
+        if self.terminal:
+            ret += f"Leaf({self.label})"
+        else:
+            ret += f"Node({self.attribute}=?)"
+        return ret
 
 
 class DecisionTreeImpl(DecisionTree):
@@ -213,3 +150,62 @@ class DecisionTreeImpl(DecisionTree):
 
     def __str__(self):
         return f"DecisionTreeImpl: labels={self.labels}, attributes={self.attributes}, attribute_values={self.attribute_values}, root={self.root}"
+
+    def parse_tree(self, node, depth=0, prefix="", is_last=False):
+        """
+        return node list and edge list for the networkx graph
+        """
+
+        if depth == 0:
+            self.node_list = []
+            self.edge_list = []
+
+        self.node_list.append(str(node))
+        if node.terminal:
+            return
+        else:
+            for i, child in enumerate(node.children):
+                self.edge_list.append((str(node), str(child)))
+                self.parse_tree(child, depth + 1, prefix, i == len(node.children) - 1)
+
+        return self.node_list, self.edge_list
+
+
+    def animate_building_tree(self):
+        """
+        Generate a gif of the tree building process
+        """
+
+        node_list, edge_list = self.parse_tree(self.root)
+        tree = nx.DiGraph()
+
+        for node in node_list:
+            tree.add_node(node)
+        for edge in edge_list:
+            tree.add_edge(edge[0], edge[1])
+
+        # Create a layout for nodes
+        pos = nx.spring_layout(tree)
+        fig, ax = plt.subplots()
+
+        def update(num):
+            ax.clear()
+            # Create a new graph for each frame
+            G = nx.DiGraph()
+            # Add nodes and edges up to the current frame number
+            for node in node_list[:num+1]:
+                G.add_node(node)
+            for edge in edge_list[:num]:
+                G.add_edge(edge[0], edge[1])
+            # Draw the graph
+            nx.draw(G, pos, with_labels=True, ax=ax, node_color='lightblue',
+                    edgelist=list(G.edges()), font_size=6)
+            ax.set_title(f"Building Tree: {num}/{len(edge_list)} edges")
+
+
+        ani = animation.FuncAnimation(fig, update, frames=range(
+            len(edge_list)+1), repeat=True, interval=10)
+
+        plt.show()
+
+        ani.save('building_tree.gif', writer='imagemagick', fps=6)

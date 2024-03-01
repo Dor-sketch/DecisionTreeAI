@@ -2,18 +2,23 @@
 
 This project showcases a Python solution for Assignment 3 of the CS 540 Introduction to Artificial Intelligence course at the *University of Wisconsin-Madison*, adapted from a **CS 20551 Introduction to AI** course at the *Open University of Israel*  (2024a) as mmn (`Matalat Manche`) 18. Originally based on Java code from the assignment, this reimplementation in Python achieved a perfect score! 🎯
 
+<p align="center">
+  <img src="./images/cover.png" alt="Decision Tree" width="500">
+</p>
+
 ---
 
 - [📖 Overview](#-overview)
 - [🛠 Technical Details](#-technical-details)
+  - [`Formulas.py`](#formulaspy)
   - [`my_DecisionTreeImpl.py`](#my_decisiontreeimplpy)
   - [`my_HW3.py`](#my_hw3py)
   - [`my_Instance.py`](#my_instancepy)
   - [`my_DecisionTree.py` \& `my_DataSet.py`](#my_decisiontreepy--my_datasetpy)
 - [🚀 How to Run](#-how-to-run)
 - [📈 Example Usage](#-example-usage)
-  - [Tennis Data Set](#tennis-data-set)
-  - [Loans Data Set](#loans-data-set)
+  - [:tennis: Tennis Data Set](#tennis-tennis-data-set)
+  - [:bank: Loans Data Set](#bank-loans-data-set)
     - [Mode 0](#mode-0)
     - [Mode 1](#mode-1)
     - [Mode 2](#mode-2)
@@ -26,6 +31,18 @@ This project showcases a Python solution for Assignment 3 of the CS 540 Introduc
 The implementation of the decision tree is a testament to the robustness and versatility of Python, transitioning from Java while aiming to maintain the original code structure and interface integrity.
 
 ## 🛠 Technical Details
+
+### `Formulas.py`
+
+This module contains the formulas for the entropy and information gain calculations, providing a clear and concise representation of the underlying mathematics. The transition from Java to Python was seamless, with the code's readability and maintainability significantly improved.
+
+Important formulas includes:
+
+- Entropy: $H(S) = -\sum_{i=1}^{c} p_i \log_2 p_i$ where $p_i$ is the probability of class $i$ in the set $S$. Thus, given binary classification, $H(S) = -p \log_2 p - (1-p) \log_2 (1-p)$ where $p$ is the probability of the positive class. The last formula is also written as $B(S)$ in some literature (e.g. the book "Artificial Intelligence: A Modern Approach" by Stuart Russell and Peter Norvig).
+
+- Remainder: $Remainder(S, A) = \sum_{v \in Values(A)} \frac{|S_v|}{|S|} H(S_v)$ where $S_v$ is the subset of $S$ for which attribute $A$ has value $v$.
+
+- Information Gain: $IG(S, A) = H(S) - Remainder(S, A)$ gives the information gain of attribute $A$ on set $S$.
 
 ### `my_DecisionTreeImpl.py`
 
@@ -64,13 +81,15 @@ Where `<F>` represents one of the following modes:
 
 - `mode 3`: Validate your tree's wisdom against the test set.
 
+- `mode 4`: Generate a GIF of your tree's growth.
+
 ---
 
 ## 📈 Example Usage
 
 Dive into the examples to see the decision tree tackle real-world datasets, from tennis matches to loan approvals, demonstrating its versatility and accuracy across diverse scenarios.
 
-### Tennis Data Set
+### :tennis: Tennis Data Set
 
 The following output are from the tennis data set (`Tennis.txt`), taken from p.222 of the studing material.
 
@@ -156,7 +175,7 @@ dorpascal@Mac-mini HW3_Skeleton % python3.11 my_HW3.py 3 tennis.txt tennis.txt
 
 ---
 
-### Loans Data Set
+### :bank: Loans Data Set
 
 ![loan_tree](https://github.com/Dor-sketch/DecisionTreeAI/assets/138825033/50e3f7f0-d904-4ecb-83d1-d1bdbcbc0f66)
 
